@@ -1,0 +1,56 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Adapters/" />
+  <Folder Name="/src/Adapters/Mcp/">
+    <Project Path="src/Adapters/Mcp/CodeCafe.Mcp/CodeCafe.Mcp.csproj" />
+  </Folder>
+  <Folder Name="/src/Adapters/Realtime/">
+    <Project Path="src/Adapters/Realtime/CodeCafe.Realtime/CodeCafe.Realtime.csproj" />
+  </Folder>
+  <Folder Name="/src/Adapters/Web/">
+    <Project Path="src/Adapters/Web/CodeCafe.Web/CodeCafe.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/CodeCafe.BuildingBlocks/CodeCafe.BuildingBlocks.csproj" />
+    <Project Path="src/BuildingBlocks/CodeCafe.SharedKernel/CodeCafe.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/CodeCafe.Host/CodeCafe.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/AI/">
+    <Project Path="src/Modules/AI/CodeCafe.Modules.AI.Application/CodeCafe.Modules.AI.Application.csproj" />
+    <Project Path="src/Modules/AI/CodeCafe.Modules.AI.Contracts/CodeCafe.Modules.AI.Contracts.csproj" />
+    <Project Path="src/Modules/AI/CodeCafe.Modules.AI.Domain/CodeCafe.Modules.AI.Domain.csproj" />
+    <Project Path="src/Modules/AI/CodeCafe.Modules.AI.Infrastructure/CodeCafe.Modules.AI.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Code/">
+    <Project Path="src/Modules/Code/CodeCafe.Modules.Code.Application/CodeCafe.Modules.Code.Application.csproj" />
+    <Project Path="src/Modules/Code/CodeCafe.Modules.Code.Contracts/CodeCafe.Modules.Code.Contracts.csproj" />
+    <Project Path="src/Modules/Code/CodeCafe.Modules.Code.Domain/CodeCafe.Modules.Code.Domain.csproj" />
+    <Project Path="src/Modules/Code/CodeCafe.Modules.Code.Infrastructure/CodeCafe.Modules.Code.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Notes/">
+    <Project Path="src/Modules/Notes/CodeCafe.Modules.Notes.Application/CodeCafe.Modules.Notes.Application.csproj" />
+    <Project Path="src/Modules/Notes/CodeCafe.Modules.Notes.Contracts/CodeCafe.Modules.Notes.Contracts.csproj" />
+    <Project Path="src/Modules/Notes/CodeCafe.Modules.Notes.Domain/CodeCafe.Modules.Notes.Domain.csproj" />
+    <Project Path="src/Modules/Notes/CodeCafe.Modules.Notes.Infrastructure/CodeCafe.Modules.Notes.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Platform/">
+    <Project Path="src/Modules/Platform/CodeCafe.Modules.Platform.Application/CodeCafe.Modules.Platform.Application.csproj" />
+    <Project Path="src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/CodeCafe.Modules.Platform.Contracts.csproj" />
+    <Project Path="src/Modules/Platform/CodeCafe.Modules.Platform.Domain/CodeCafe.Modules.Platform.Domain.csproj" />
+    <Project Path="src/Modules/Platform/CodeCafe.Modules.Platform.Infrastructure/CodeCafe.Modules.Platform.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Backend/" />
+  <Folder Name="/tests/Backend/ArchitectureTests/">
+    <Project Path="tests/Backend/ArchitectureTests/CodeCafe.ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Backend/IntegrationTests/">
+    <Project Path="tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Backend/UnitTests/">
+    <Project Path="tests/Backend/UnitTests/CodeCafe.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,151 @@
+# ============================================================
+# .NET / Visual Studio
+# ============================================================
+bin/
+obj/
+out/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+build/
+bld/
+[Ll]og/
+[Ll]ogs/
+[Oo]bj/
+[Oo]bj*/
+
+# Visual Studio
+.vs/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.sln.docstates
+*.vsp
+*.vspx
+*.sapcar
+*.swp
+*.swo
+*.tmp
+
+# Rider / ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.idea/
+
+# VS Code (project-level settings only; user settings excluded)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# ============================================================
+# .NET Build Artifacts
+# ============================================================
+*.dll
+*.exe
+*.pdb
+*.cachefile
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Publish
+publish/
+*.pubxml
+*.pubxml.user
+*.publishproj
+
+# Azure
+*.azurePubxml
+
+# ============================================================
+# Test Results / Coverage
+# ============================================================
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.[Cc]overage
+*.coveragexml
+coverage.*.xml
+coverage.json
+.coverage
+TestResult*.xml
+TestResult*.json
+coverageReports/
+*.trx
+*.coverage
+
+# ============================================================
+# OS / Misc
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+$RECYCLE.BIN/
+
+# ============================================================
+# Secrets
+# ============================================================
+*.env
+*.env.*
+!.env.example
+appsettings.*.local.json
+secrets.json
+secrets.*.json
+
+# ============================================================
+# Frontend (codecafe-web)
+# ============================================================
+src/Frontend/codecafe-web/node_modules/
+src/Frontend/codecafe-web/dist/
+src/Frontend/codecafe-web/dist-ssr/
+src/Frontend/codecafe-web/.vite/
+src/Frontend/codecafe-web/coverage/
+src/Frontend/codecafe-web/playwright-report/
+src/Frontend/codecafe-web/test-results/
+src/Frontend/codecafe-web/.env
+src/Frontend/codecafe-web/.env.local
+src/Frontend/codecafe-web/.env.*.local
+src/Frontend/codecafe-web/*.local
+
+# npm / yarn / pnpm
+*.tsbuildinfo
+package-lock.json.bak
+yarn.lock.bak
+pnpm-lock.yaml.bak
+.pnpm-store/
+
+# ============================================================
+# Tools
+# ============================================================
+# JetBrains
+.idea/
+*.iml
+*.iws
+
+# Cursor / Claude / AI
+.cursor/
+.claude/
+.aider*
+.swe-bench/
+.continue/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
