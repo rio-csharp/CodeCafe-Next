@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +19,10 @@
     <ProjectReference Include="..\..\Adapters\Web\CodeCafe.Web\CodeCafe.Web.csproj" />
     <ProjectReference Include="..\..\Adapters\Mcp\CodeCafe.Mcp\CodeCafe.Mcp.csproj" />
     <ProjectReference Include="..\..\Adapters\Realtime\CodeCafe.Realtime\CodeCafe.Realtime.csproj" />
+    <ProjectReference Include="..\..\Modules\Platform\CodeCafe.Modules.Platform.Application\CodeCafe.Modules.Platform.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Notes\CodeCafe.Modules.Notes.Application\CodeCafe.Modules.Notes.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Code\CodeCafe.Modules.Code.Application\CodeCafe.Modules.Code.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\AI\CodeCafe.Modules.AI.Application\CodeCafe.Modules.AI.Application.csproj" />
   </ItemGroup>
 
 </Project>
