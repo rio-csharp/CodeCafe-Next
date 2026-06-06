@@ -17,7 +17,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | Module | Public Surface | Current State | Notes |
 | --- | --- | --- | --- |
 | Platform | `src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/Auth/**` | Active | Registration, login, and current-user response contracts exist. |
-| Platform | `src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/Workspace/**` | Planned by REQ-002 | Expected to expose WorkspaceId, current workspace context, and basic workspace response DTO. |
+| Platform | `src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/Workspaces/**` | Implemented on `codex/platform-workspace`; pending review/merge | Adds `WorkspaceResponse` and `CurrentWorkspaceContextResponse`. |
 | Notes | `src/Modules/Notes/CodeCafe.Modules.Notes.Contracts/**` | Empty or minimal | Future note/knowledge DTOs should start here. |
 | Code | `src/Modules/Code/CodeCafe.Modules.Code.Contracts/**` | Empty or minimal | Future repository/workspace context contracts should start here. |
 | AI | `src/Modules/AI/CodeCafe.Modules.AI.Contracts/**` | Empty or minimal | Future conversation, task, and tool-call contracts should start here. |
@@ -56,7 +56,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | Decision | Needed By | Owner Lane | Status |
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
-| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Planned for REQ-002 |
+| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; pending review/merge |
 | Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Planned for REQ-003, final shape depends on REQ-002 |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
@@ -66,11 +66,13 @@ This document tracks public module boundaries and cross-lane contract rules.
 
 The `platform-workspace` lane should introduce the smallest stable contract set needed to let the rest of the product attach user data to a personal workspace.
 
-Expected concepts:
+Implemented concepts on `codex/platform-workspace`:
 
-- `WorkspaceId`: stable workspace identity value exposed through Platform contracts.
-- Current workspace context: identifies the authenticated user's active personal workspace for application workflows.
-- Basic workspace response DTO: enough for Web/Desktop/Mobile shells to render the current workspace without depending on Platform internals.
+- `WorkspaceId`: domain value object for stable workspace identity.
+- `WorkspaceResponse`: basic workspace response DTO.
+- `CurrentWorkspaceContextResponse`: current workspace context response DTO.
+- `GetCurrentWorkspaceContextQuery`: application query for the authenticated user's current workspace.
+- `CurrentWorkspaceContextView` and `WorkspaceView`: application read models.
 
 Out of scope for REQ-002:
 
@@ -79,6 +81,15 @@ Out of scope for REQ-002:
 - Organization management.
 - Non-Platform module persistence changes.
 - Host or controller business logic.
+
+REQ-002 completion status:
+
+- Source branch: `codex/platform-workspace`
+- Source commit: `a7575952c355df5d7fa2b0337d78b22ea92a714a`
+- Verification reported by child session: `dotnet build CodeCafe.slnx` passed; `dotnet test tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj` passed with 6 tests.
+- Forbidden paths touched: none reported and coordinator spot-check found none.
+- Residual risk: registration user/workspace creation is not wrapped in an explicit transaction; query fallback mitigates missing workspace rows, but concurrent first-workspace creation may race on the unique index.
+- Current workspace Web/API endpoint: absent; dispatch `platform-workspace-entry-api` after review and merge unless review changes that judgment.
 
 ## REQ-003 Cross-Platform Workspace Entry Contract Intent
 

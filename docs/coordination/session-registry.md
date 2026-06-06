@@ -16,6 +16,7 @@ Coordinator rule: this session does not create child sessions. It only updates c
 - Child sessions must paste a structured completion report back to the coordinator session so registry, contracts, and integration readiness can be updated.
 - Only branches with passing relevant build/test results should be suggested for merge.
 - Merge execution should use its own short-lived worktree and branch after the coordinator decides a branch is ready to merge.
+- Review-only child sessions must still use an independent worktree and branch, but they must not edit files or create commits unless the coordinator explicitly changes the task.
 
 ## Lane Registry
 
@@ -24,8 +25,9 @@ Coordinator rule: this session does not create child sessions. It only updates c
 | `ai-agent-core` | `codex/ai-agent-core` | `D:\Development\CodeCafe-Next.worktrees\ai-agent-core` | `src/Modules/AI/**`, AI-facing tests, AI contract proposals | `src/Host/**`, `CodeCafe.slnx`, `Directory.Build.props`, `src/BuildingBlocks/**`, non-AI modules, frontend, package files without coordinator approval | Planned |
 | `web-shell` | `codex/web-shell` | `D:\Development\CodeCafe-Next.worktrees\web-shell` | `src/Frontend/codecafe-web/src/**`, frontend tests, frontend architecture notes | backend modules, adapters, `src/Host/**`, `CodeCafe.slnx`, backend shared files, package or lockfile changes without coordinator approval | Planned for REQ-003 |
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | `D:\Development\CodeCafe-Next.worktrees\client-sdk-foundation` | Future shared client boundary after Platform workspace contract/API stabilizes | Backend modules, adapters, host, solution files, package files, desktop scaffold, frontend feature work without coordinator approval | Conditional follow-up, do not start yet |
-| `platform-workspace` | `codex/platform-workspace` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace` | `src/Modules/Platform/**`, Platform-focused backend tests, Platform workspace contracts | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, non-Platform modules, frontend, package files without coordinator approval | Planned for REQ-002 |
-| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-entry-api` | Conditional Web/Host exposure for current workspace after REQ-002 completion report | Platform domain rewrite, non-Platform modules, frontend, desktop, package files, shared building blocks without coordinator approval | Conditional follow-up, do not start yet |
+| `platform-workspace` | `codex/platform-workspace` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace` | `src/Modules/Platform/**`, Platform-focused backend tests, Platform workspace contracts | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, non-Platform modules, frontend, package files without coordinator approval | Completed for REQ-002; pending review |
+| `platform-workspace-review` | `codex/platform-workspace-review` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-review` | Review `codex/platform-workspace` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Ready to dispatch |
+| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-entry-api` | Conditional Web/Host exposure for current workspace after REQ-002 merge | Platform domain rewrite, non-Platform modules, frontend, desktop, package files, shared building blocks without coordinator approval | Deferred; likely needed after REQ-002 merge |
 | `notes-knowledge` | `codex/notes-knowledge` | `D:\Development\CodeCafe-Next.worktrees\notes-knowledge` | `src/Modules/Notes/**`, Notes tests, Notes contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
 | `code-workspace` | `codex/code-workspace` | `D:\Development\CodeCafe-Next.worktrees\code-workspace` | `src/Modules/Code/**`, Code tests, Code contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
 | `avalonia-desktop` | `codex/avalonia-desktop` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop` | future `src/Desktop/**`, future desktop tests, Avalonia client architecture notes | backend module internals, web frontend, host, solution files, package files, shared building blocks without coordinator approval | Planned for REQ-003 |
@@ -37,7 +39,7 @@ Do not start these sessions until the coordinator explicitly reactivates them.
 | Lane | Branch | Why Deferred | Reactivation Trigger |
 | --- | --- | --- | --- |
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | REQ-002 workspace contract/API is not stable yet; starting now would force Web/Desktop to guess shared SDK shape. | Start after REQ-002 completion report or merge confirms stable `WorkspaceId`, `CurrentWorkspaceResponse`, current-user/session API shape, and the coordinator decides a shared client boundary is needed. |
-| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | REQ-002 may already provide the needed application/API exposure; starting now risks duplicating or rewriting Platform workspace work. | Start only if REQ-002 completion report shows current workspace cannot be reached by Web/Desktop and coordinator approves a focused Web/Host/API exposure lane. |
+| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | REQ-002 provides application-layer workspace foundation but no Web/Controller endpoint was found for current workspace. Starting before REQ-002 review/merge would stack integration work on an unmerged branch. | Start after REQ-002 is reviewed and merged, unless review finds the endpoint already exists or rejects the branch. |
 
 ## Conflict-Risk Surfaces
 
@@ -292,6 +294,62 @@ Completion report required:
 - Exact build/test commands run and results.
 - Whether REQ-002 acceptance criteria are fully met.
 - Follow-up integration lanes requested, if any.
+- Residual risks.
+```
+
+### Prompt: platform-workspace-review
+
+```text
+You are the platform-workspace-review session for CodeCafe-Next.
+
+Review target:
+- Requirement ID: REQ-002
+- Source branch: codex/platform-workspace
+- Source commit: a7575952c355df5d7fa2b0337d78b22ea92a714a
+- Base branch: main / origin/main
+
+Before reviewing, create or switch to an independent git worktree and branch:
+- Base repository: D:\Development\CodeCafe-Next
+- Worktree path: D:\Development\CodeCafe-Next.worktrees\platform-workspace-review
+- Branch: codex/platform-workspace-review
+- Base branch: origin/main
+
+Immediately report before reviewing:
+- actual worktree path
+- actual branch
+- source branch and source commit being reviewed
+- that this is review-only
+
+Review-only rules:
+- Do not edit files.
+- Do not stage files.
+- Do not commit.
+- Do not merge.
+- Do not rewrite the source branch.
+
+Review scope:
+- Compare `codex/platform-workspace` against `main`.
+- Focus on bugs, behavioral regressions, missing tests, architectural boundary violations, and merge blockers.
+- Pay special attention to Platform contracts, EF migration/model snapshot, registration now creating a workspace, current workspace fallback creation, repository save behavior, and the reported residual risk around concurrent first-workspace creation.
+- Verify forbidden paths were not changed.
+- Confirm whether Web/API exposure for current workspace is absent and should remain a follow-up lane.
+
+Suggested commands:
+- `git fetch origin`
+- `git diff --name-only main..codex/platform-workspace`
+- `git diff main..codex/platform-workspace`
+- `dotnet build CodeCafe.slnx`
+- `dotnet test tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj`
+
+Completion report back to coordinator must include:
+- Worktree path.
+- Review branch.
+- Source branch and commit reviewed.
+- Findings first, ordered by severity, with file/line references where possible.
+- Explicit statement whether this branch is recommended to merge, needs fixes, or needs more testing.
+- Commands run and results.
+- Whether forbidden paths were touched by the source branch.
+- Whether `platform-workspace-entry-api` should be started after merge.
 - Residual risks.
 ```
 
