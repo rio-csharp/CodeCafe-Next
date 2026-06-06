@@ -1,2 +1,1 @@
-// Page-level components
-export {};
+export { WorkspaceShellPage } from './workspace-shell';

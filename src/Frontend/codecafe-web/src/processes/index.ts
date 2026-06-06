@@ -1,2 +1,1 @@
-// Cross-feature business processes
-export {};
+export * from './workspace';
