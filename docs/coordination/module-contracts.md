@@ -56,7 +56,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | Decision | Needed By | Owner Lane | Status |
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
-| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; review found fixes needed before merge |
+| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented and patched for REQ-002 through commit `a9c8882b554af3f8cb5163cf57410c25ce8d94c8`; pending re-review |
 | Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Web and Desktop boundaries implemented with placeholder data; final shape depends on REQ-002 and API follow-up |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
@@ -91,6 +91,10 @@ REQ-002 completion status:
 - Review result: fixes required before merge.
 - Required fix: registration user/workspace creation must be atomic or otherwise avoid partial user creation if workspace persistence fails.
 - Required fix: current workspace fallback must handle concurrent default workspace creation safely around the unique `(OwnerUserId, Kind)` index.
+- Fix commit: `a9c8882b554af3f8cb5163cf57410c25ce8d94c8`
+- Fix verification reported by child session: `dotnet build CodeCafe.slnx` passed; `dotnet test tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj` passed with 8 tests.
+- Fix status: ready for re-review.
+- Fix residual risk: concurrency recovery catches `DbUpdateException` broadly, suppressing it only when the existing workspace can be re-read; otherwise it rethrows.
 - Current workspace Web/API endpoint: absent; dispatch `platform-workspace-entry-api` after review and merge unless review changes that judgment.
 
 ## REQ-003 Cross-Platform Workspace Entry Contract Intent

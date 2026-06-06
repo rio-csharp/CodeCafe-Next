@@ -20,8 +20,8 @@ This board tracks merge readiness for active CodeCafe development lanes.
 | `web-shell` | `codex/web-shell` | Implementation complete for REQ-003 Web | Awaiting review | Review session required before merge; source commit `8d17aa61a2e525ee5e8e541c337c50be1bf9e36b`; final API binding depends on REQ-002/API follow-up | shared frontend structure, placeholder workspace client, future workspace API binding |
 | `web-shell-review` | `codex/web-shell-review` | Ready to dispatch | Not ready | Review-only session not started | None if review remains read-only |
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | Conditional follow-up | Not ready | Keep deferred until REQ-002 and workspace API exposure are merged | shared client boundary shape, package files if generated tooling is proposed |
-| `platform-workspace` | `codex/platform-workspace` | Needs fix after REQ-002 review | Not ready | Fix registration atomicity and concurrent first-workspace fallback before re-review | Platform contracts, EF migrations, registration flow, current workspace fallback |
-| `platform-workspace-review` | `codex/platform-workspace-review` | Completed | Not ready | Review found two P2 issues requiring source-branch fixes | None; review remained read-only |
+| `platform-workspace` | `codex/platform-workspace` | Fix complete for REQ-002 | Awaiting re-review | Source commit `a9c8882b554af3f8cb5163cf57410c25ce8d94c8`; re-review required before merge | Platform contracts, EF migrations, registration flow, current workspace fallback |
+| `platform-workspace-review` | `codex/platform-workspace-review` | Ready for re-review | Not ready | Re-review fix commit `a9c8882b554af3f8cb5163cf57410c25ce8d94c8` | None if review remains read-only |
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | Deferred; likely needed after REQ-002 merge | Not ready | Wait for REQ-002 review and merge | Web adapter, Host wiring, Platform application query exposure |
 | `notes-knowledge` | `codex/notes-knowledge` | Planned | Not ready | Session not started | Notes contracts, Web adapter endpoints, Host wiring |
 | `code-workspace` | `codex/code-workspace` | Planned | Not ready | Session not started | Code contracts, AI integration, MCP tools |
@@ -80,7 +80,7 @@ The desktop lane must define its own build command after the Avalonia project sh
 - Module-internal branches can be reviewed independently if they avoid host, adapter, and solution changes.
 - Contract changes should be merged before adapter or frontend work depends on them.
 - Host or adapter wiring should be a small follow-up branch after module contracts are stable.
-- Platform workspace review found two true P2 issues: registration atomicity and concurrent first-workspace fallback. Fix `codex/platform-workspace` before re-review.
+- Platform workspace P2 fixes are complete on `codex/platform-workspace`; re-review before opening a merge session.
 - The review's P1 coordination-doc finding was a diff-baseline false positive: merge-base diff shows `codex/platform-workspace` did not touch `docs/coordination/**`.
 - Platform workspace should merge before Notes, Code, AI, Web, Desktop, or Mobile lanes require persisted workspace context.
 - `platform-workspace-entry-api` should start after REQ-002 merge because no current workspace Web/API endpoint exists on `main` or in the REQ-002 branch.
