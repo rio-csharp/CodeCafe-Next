@@ -16,4 +16,9 @@ public interface IUserRepository
     Task<bool> EmailExistsAsync(Email email, CancellationToken cancellationToken);
 
     Task AddAsync(User user, CancellationToken cancellationToken);
+
+    Task AddWithDefaultWorkspaceAsync(
+        User user,
+        Workspace workspace,
+        CancellationToken cancellationToken);
 }

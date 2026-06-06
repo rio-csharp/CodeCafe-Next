@@ -37,8 +37,9 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Re
 
         var hash = _passwordHasher.Hash(request.Password);
         var user = User.Register(email, hash, request.DisplayName, _clock.UtcNow);
+        var workspace = Workspace.CreateDefaultPersonal(user.Id, _clock.UtcNow);
 
-        await _userRepository.AddAsync(user, cancellationToken);
+        await _userRepository.AddWithDefaultWorkspaceAsync(user, workspace, cancellationToken);
 
         return new RegisterResult(user.Id, user.Email.Value, user.DisplayName);
     }

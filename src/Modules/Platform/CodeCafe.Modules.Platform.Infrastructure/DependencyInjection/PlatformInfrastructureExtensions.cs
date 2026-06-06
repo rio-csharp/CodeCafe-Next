@@ -42,6 +42,7 @@ public static class PlatformInfrastructureExtensions
         services.TryAddSingleton<IClock, SystemClock>();
         services.TryAddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
 
         return services;
     }

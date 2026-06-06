@@ -30,4 +30,14 @@ public sealed class UserRepository : IUserRepository
         await _db.Users.AddAsync(user, cancellationToken);
         await _db.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task AddWithDefaultWorkspaceAsync(
+        User user,
+        Workspace workspace,
+        CancellationToken cancellationToken)
+    {
+        await _db.Users.AddAsync(user, cancellationToken);
+        await _db.Workspaces.AddAsync(workspace, cancellationToken);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
 }
