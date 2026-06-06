@@ -17,8 +17,9 @@ This board tracks merge readiness for active CodeCafe development lanes.
 | Lane | Branch | Status | Merge Readiness | Blockers | Conflict Risk |
 | --- | --- | --- | --- | --- | --- |
 | `ai-agent-core` | `codex/ai-agent-core` | Planned | Not ready | Session not started | AI contracts, MCP adapter, Host wiring if requested |
-| `web-shell` | `codex/web-shell` | Implementation complete for REQ-003 Web | Awaiting review | Review session required before merge; source commit `8d17aa61a2e525ee5e8e541c337c50be1bf9e36b`; final API binding depends on REQ-002/API follow-up | shared frontend structure, placeholder workspace client, future workspace API binding |
-| `web-shell-review` | `codex/web-shell-review` | Ready to dispatch | Not ready | Review-only session not started | None if review remains read-only |
+| `web-shell` | `codex/web-shell` | Review passed for REQ-003 Web | Ready for merge session | Merge via `web-shell-merge`; final API binding depends on REQ-002/API follow-up | shared frontend structure, placeholder workspace client, future workspace API binding |
+| `web-shell-review` | `codex/web-shell-review` | Completed | Done | Frontend implementation mergeable; coordination-doc finding was a diff-baseline false positive | None; review remained read-only |
+| `web-shell-merge` | `codex/web-shell-merge` | Ready to dispatch | Not ready | Merge session not started | Main push, frontend type-check/build verification |
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | Conditional follow-up | Not ready | Keep deferred until REQ-002 and workspace API exposure are merged | shared client boundary shape, package files if generated tooling is proposed |
 | `platform-workspace` | `codex/platform-workspace` | Fix complete for REQ-002 | Awaiting re-review | Source commit `a9c8882b554af3f8cb5163cf57410c25ce8d94c8`; re-review required before merge | Platform contracts, EF migrations, registration flow, current workspace fallback |
 | `platform-workspace-review` | `codex/platform-workspace-review` | Ready for re-review | Not ready | Re-review fix commit `a9c8882b554af3f8cb5163cf57410c25ce8d94c8` | None if review remains read-only |
@@ -85,7 +86,7 @@ The desktop lane must define its own build command after the Avalonia project sh
 - The review's P1 coordination-doc finding was a diff-baseline false positive: merge-base diff shows `codex/platform-workspace` did not touch `docs/coordination/**`.
 - Platform workspace should merge before Notes, Code, AI, Web, Desktop, or Mobile lanes require persisted workspace context.
 - `platform-workspace-entry-api` should start after REQ-002 merge because no current workspace Web/API endpoint exists on `main` or in the REQ-002 branch.
-- Web shell implementation is complete on `codex/web-shell`; review it before opening a merge session.
+- Web shell review passed; open `web-shell-merge` before starting any SDK/API binding work.
 - Keep `client-sdk-foundation` deferred until Web/Desktop reviews show whether shared client-boundary unification is actually needed.
 - Avalonia desktop review passed; open `avalonia-desktop-merge` before starting any solution/CI wiring.
 - Keep `desktop-solution-wiring` deferred until after desktop review/merge because it touches conflict-risk solution/CI surfaces.

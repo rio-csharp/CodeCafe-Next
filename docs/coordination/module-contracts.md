@@ -123,6 +123,7 @@ REQ-003 Web completion status:
 - Forbidden paths touched: none reported and coordinator spot-check found none.
 - Workspace client boundary: `src/Frontend/codecafe-web/src/processes/workspace/**`
 - Placeholder status: local placeholder current workspace data remains and must be replaced after REQ-002/API follow-up.
+- Review status: `web-shell-review` found the frontend implementation mergeable; coordinator confirmed the reported coordination-doc blocker was a diff-baseline false positive.
 
 REQ-003 Desktop completion status:
 
