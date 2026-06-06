@@ -26,8 +26,8 @@ Coordinator rule: this session does not create child sessions. It only updates c
 | `web-shell` | `codex/web-shell` | `D:\Development\CodeCafe-Next.worktrees\web-shell` | `src/Frontend/codecafe-web/src/**`, frontend tests, frontend architecture notes | backend modules, adapters, `src/Host/**`, `CodeCafe.slnx`, backend shared files, package or lockfile changes without coordinator approval | Completed for REQ-003 Web; pending review |
 | `web-shell-review` | `codex/web-shell-review` | `D:\Development\CodeCafe-Next.worktrees\web-shell-review` | Review `codex/web-shell` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Ready to dispatch |
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | `D:\Development\CodeCafe-Next.worktrees\client-sdk-foundation` | Future shared client boundary after Platform workspace contract/API stabilizes | Backend modules, adapters, host, solution files, package files, desktop scaffold, frontend feature work without coordinator approval | Conditional follow-up, do not start yet |
-| `platform-workspace` | `codex/platform-workspace` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace` | `src/Modules/Platform/**`, Platform-focused backend tests, Platform workspace contracts | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, non-Platform modules, frontend, package files without coordinator approval | Completed for REQ-002; pending review |
-| `platform-workspace-review` | `codex/platform-workspace-review` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-review` | Review `codex/platform-workspace` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Ready to dispatch |
+| `platform-workspace` | `codex/platform-workspace` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace` | `src/Modules/Platform/**`, Platform-focused backend tests, Platform workspace contracts | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, non-Platform modules, frontend, package files without coordinator approval | Needs fix after REQ-002 review |
+| `platform-workspace-review` | `codex/platform-workspace-review` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-review` | Review `codex/platform-workspace` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Completed; fix required |
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-entry-api` | Conditional Web/Host exposure for current workspace after REQ-002 merge | Platform domain rewrite, non-Platform modules, frontend, desktop, package files, shared building blocks without coordinator approval | Deferred; likely needed after REQ-002 merge |
 | `notes-knowledge` | `codex/notes-knowledge` | `D:\Development\CodeCafe-Next.worktrees\notes-knowledge` | `src/Modules/Notes/**`, Notes tests, Notes contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
 | `code-workspace` | `codex/code-workspace` | `D:\Development\CodeCafe-Next.worktrees\code-workspace` | `src/Modules/Code/**`, Code tests, Code contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
@@ -403,6 +403,73 @@ Completion report back to coordinator must include:
 - Commands run and results.
 - Whether forbidden paths were touched by the source branch.
 - Whether `platform-workspace-entry-api` should be started after merge.
+- Residual risks.
+```
+
+### Prompt: platform-workspace-fix
+
+```text
+You are continuing the platform-workspace development session for CodeCafe-Next.
+
+Requirement:
+- Requirement ID: REQ-002
+- Branch: codex/platform-workspace
+- Worktree: D:\Development\CodeCafe-Next.worktrees\platform-workspace
+- Previous commit reviewed: a7575952c355df5d7fa2b0337d78b22ea92a714a
+
+Before editing, report:
+- actual worktree path
+- actual branch
+- current HEAD commit
+- allowed paths
+- forbidden paths
+
+Allowed paths:
+- src/Modules/Platform/**
+- tests/Backend/UnitTests/** only for Platform workspace-focused tests
+- tests/Backend/IntegrationTests/** only for auth user -> workspace flow tests
+
+Forbidden without coordinator approval:
+- docs/coordination/**
+- docs/product/**
+- docs/reference/**
+- CodeCafe.slnx
+- Directory.Build.props
+- src/Host/**
+- src/Adapters/**
+- src/BuildingBlocks/**
+- src/Modules/Notes/**
+- src/Modules/Code/**
+- src/Modules/AI/**
+- src/Frontend/**
+- package or lock files
+
+Review result to act on:
+- P1 from review about forbidden coordination docs is treated by coordinator as a diff-baseline false positive. Do not modify coordination docs.
+- P2 true issue: registration is not atomic across user/workspace creation. Fix so user registration and default personal workspace creation cannot leave a user without a workspace if workspace persistence fails.
+- P2 true issue: concurrent first-workspace fallback can throw on the unique `(OwnerUserId, Kind)` index. Fix so concurrent requests resolve the existing workspace or otherwise fail gracefully without breaking current workspace context.
+
+Task:
+Patch the existing `codex/platform-workspace` branch to address the two P2 issues. Keep scope narrow. Do not add Web/API endpoints. Do not touch Host, adapters, frontend, solution files, or coordination docs.
+
+Acceptance criteria:
+- Registration user + default workspace creation is atomic or otherwise cannot leave partial state on workspace insert failure.
+- Current workspace fallback handles concurrent creation of the default personal workspace.
+- Existing Platform auth flow tests still pass.
+- Add or update focused integration/unit tests for the fixed behavior if practical.
+- `dotnet build CodeCafe.slnx` passes.
+- `dotnet test tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj` passes.
+- Commit the fix on `codex/platform-workspace`.
+
+Completion report back to coordinator must include:
+- Worktree path.
+- Branch name.
+- New commit hash and commit message.
+- Changed paths.
+- Forbidden paths touched, or "none".
+- How each P2 finding was fixed.
+- Tests/build commands run and results.
+- Whether REQ-002 is now ready for re-review.
 - Residual risks.
 ```
 

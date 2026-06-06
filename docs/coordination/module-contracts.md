@@ -56,7 +56,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | Decision | Needed By | Owner Lane | Status |
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
-| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; pending review/merge |
+| WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; review found fixes needed before merge |
 | Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Web boundary implemented on `codex/web-shell` with placeholder data; final shape depends on REQ-002 and API follow-up |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
@@ -87,8 +87,10 @@ REQ-002 completion status:
 - Source branch: `codex/platform-workspace`
 - Source commit: `a7575952c355df5d7fa2b0337d78b22ea92a714a`
 - Verification reported by child session: `dotnet build CodeCafe.slnx` passed; `dotnet test tests/Backend/IntegrationTests/CodeCafe.IntegrationTests.csproj` passed with 6 tests.
-- Forbidden paths touched: none reported and coordinator spot-check found none.
-- Residual risk: registration user/workspace creation is not wrapped in an explicit transaction; query fallback mitigates missing workspace rows, but concurrent first-workspace creation may race on the unique index.
+- Forbidden paths touched: none reported; coordinator merge-base spot-check found none. Review P1 about coordination docs was caused by comparing `origin/main..branch` after coordinator docs advanced on `main`.
+- Review result: fixes required before merge.
+- Required fix: registration user/workspace creation must be atomic or otherwise avoid partial user creation if workspace persistence fails.
+- Required fix: current workspace fallback must handle concurrent default workspace creation safely around the unique `(OwnerUserId, Kind)` index.
 - Current workspace Web/API endpoint: absent; dispatch `platform-workspace-entry-api` after review and merge unless review changes that judgment.
 
 ## REQ-003 Cross-Platform Workspace Entry Contract Intent
