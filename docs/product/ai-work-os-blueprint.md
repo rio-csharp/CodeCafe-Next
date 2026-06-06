@@ -104,6 +104,19 @@ Owns conversations, agent tasks, orchestration, tool execution, planning, and in
 - Other modules should depend on stable Platform contracts for workspace identity and context, not on Platform infrastructure.
 - Host and controllers may expose workspace behavior later, but business rules must remain inside Platform application workflows.
 
+## Cross-Platform Workspace Entry
+
+The first visible AI Work OS experience should be a workspace shell across Web and Desktop.
+
+Web and Desktop should both show:
+
+- Current workspace identity.
+- Primary navigation.
+- Main work surface.
+- AI or context panel placeholder.
+
+Until Platform workspace API contracts are merged, clients may build typed boundaries and local placeholder adapters. They must not scatter raw fetch calls or hardcode final endpoint assumptions.
+
 ## 24h Parallel Build Model
 
 The project now uses a coordinator plus multiple development lanes:
@@ -118,11 +131,11 @@ The project now uses a coordinator plus multiple development lanes:
 ## First Development Lanes
 
 - `ai-agent-core`: AI module, agent task/conversation core, MCP-facing tool boundaries.
-- `web-shell`: browser workspace shell, routing, shared UI/API/realtime foundations.
+- `web-shell`: browser workspace shell, routing, shared UI/API/realtime foundations, and REQ-003 Web workspace entry.
 - `platform-workspace`: Platform-owned workspace identity and current workspace foundation.
 - `notes-knowledge`: Notes module knowledge model and note workflows.
 - `code-workspace`: Code module repository/workspace model and code-understanding workflows.
-- `avalonia-desktop`: Avalonia client foundation and desktop integration plan.
+- `avalonia-desktop`: Avalonia client foundation, desktop integration plan, and REQ-003 Desktop workspace entry.
 
 ## Reference Sources
 

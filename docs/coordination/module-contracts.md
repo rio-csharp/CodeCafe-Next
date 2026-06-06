@@ -17,6 +17,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | Module | Public Surface | Current State | Notes |
 | --- | --- | --- | --- |
 | Platform | `src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/Auth/**` | Active | Registration, login, and current-user response contracts exist. |
+| Platform | `src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/Workspace/**` | Planned by REQ-002 | Expected to expose WorkspaceId, current workspace context, and basic workspace response DTO. |
 | Notes | `src/Modules/Notes/CodeCafe.Modules.Notes.Contracts/**` | Empty or minimal | Future note/knowledge DTOs should start here. |
 | Code | `src/Modules/Code/CodeCafe.Modules.Code.Contracts/**` | Empty or minimal | Future repository/workspace context contracts should start here. |
 | AI | `src/Modules/AI/CodeCafe.Modules.AI.Contracts/**` | Empty or minimal | Future conversation, task, and tool-call contracts should start here. |
@@ -56,6 +57,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
 | WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Planned for REQ-002 |
+| Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Planned for REQ-003, final shape depends on REQ-002 |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
 | Desktop client API consumption model | Avalonia shell | `avalonia-desktop` | Planned |
@@ -77,6 +79,24 @@ Out of scope for REQ-002:
 - Organization management.
 - Non-Platform module persistence changes.
 - Host or controller business logic.
+
+## REQ-003 Cross-Platform Workspace Entry Contract Intent
+
+The `web-shell` and `avalonia-desktop` lanes should consume workspace concepts through typed boundaries while REQ-002 is still in flight.
+
+Expected client-side concepts:
+
+- `WorkspaceId`: opaque identifier matching Platform intent.
+- `CurrentWorkspaceResponse`: display-ready current workspace data.
+- Authenticated current user/session state: enough for a logged-in shell to request or display current workspace context.
+
+Rules:
+
+- If Platform workspace contracts/API are absent from the base branch, clients may create temporary local types and adapters.
+- Temporary client types must be isolated behind API/client/service boundaries so they can be replaced by real Platform contracts later.
+- Raw fetch calls must not be scattered across Web pages or widgets.
+- Desktop API access must be behind a service boundary, not embedded in views.
+- A separate `client-sdk-foundation` lane should start only after REQ-002 defines enough stable API/contract shape to avoid guessing.
 
 ## Contract Change Protocol
 

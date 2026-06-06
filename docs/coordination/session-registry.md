@@ -22,11 +22,22 @@ Coordinator rule: this session does not create child sessions. It only updates c
 | Lane | Branch | Suggested Worktree | Responsible Scope | Forbidden Scope | Status |
 | --- | --- | --- | --- | --- | --- |
 | `ai-agent-core` | `codex/ai-agent-core` | `D:\Development\CodeCafe-Next.worktrees\ai-agent-core` | `src/Modules/AI/**`, AI-facing tests, AI contract proposals | `src/Host/**`, `CodeCafe.slnx`, `Directory.Build.props`, `src/BuildingBlocks/**`, non-AI modules, frontend, package files without coordinator approval | Planned |
-| `web-shell` | `codex/web-shell` | `D:\Development\CodeCafe-Next.worktrees\web-shell` | `src/Frontend/codecafe-web/src/**`, frontend tests, frontend architecture notes | backend modules, adapters, `src/Host/**`, `CodeCafe.slnx`, backend shared files, package or lockfile changes without coordinator approval | Planned |
+| `web-shell` | `codex/web-shell` | `D:\Development\CodeCafe-Next.worktrees\web-shell` | `src/Frontend/codecafe-web/src/**`, frontend tests, frontend architecture notes | backend modules, adapters, `src/Host/**`, `CodeCafe.slnx`, backend shared files, package or lockfile changes without coordinator approval | Planned for REQ-003 |
+| `client-sdk-foundation` | `codex/client-sdk-foundation` | `D:\Development\CodeCafe-Next.worktrees\client-sdk-foundation` | Future shared client boundary after Platform workspace contract/API stabilizes | Backend modules, adapters, host, solution files, package files, desktop scaffold, frontend feature work without coordinator approval | Conditional follow-up, do not start yet |
 | `platform-workspace` | `codex/platform-workspace` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace` | `src/Modules/Platform/**`, Platform-focused backend tests, Platform workspace contracts | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, non-Platform modules, frontend, package files without coordinator approval | Planned for REQ-002 |
+| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-entry-api` | Conditional Web/Host exposure for current workspace after REQ-002 completion report | Platform domain rewrite, non-Platform modules, frontend, desktop, package files, shared building blocks without coordinator approval | Conditional follow-up, do not start yet |
 | `notes-knowledge` | `codex/notes-knowledge` | `D:\Development\CodeCafe-Next.worktrees\notes-knowledge` | `src/Modules/Notes/**`, Notes tests, Notes contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
 | `code-workspace` | `codex/code-workspace` | `D:\Development\CodeCafe-Next.worktrees\code-workspace` | `src/Modules/Code/**`, Code tests, Code contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
-| `avalonia-desktop` | `codex/avalonia-desktop` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop` | future `src/Desktop/**`, future desktop tests, Avalonia client architecture notes | backend module internals, web frontend, host, solution files, package files, shared building blocks without coordinator approval | Planned |
+| `avalonia-desktop` | `codex/avalonia-desktop` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop` | future `src/Desktop/**`, future desktop tests, Avalonia client architecture notes | backend module internals, web frontend, host, solution files, package files, shared building blocks without coordinator approval | Planned for REQ-003 |
+
+## Deferred Child Sessions
+
+Do not start these sessions until the coordinator explicitly reactivates them.
+
+| Lane | Branch | Why Deferred | Reactivation Trigger |
+| --- | --- | --- | --- |
+| `client-sdk-foundation` | `codex/client-sdk-foundation` | REQ-002 workspace contract/API is not stable yet; starting now would force Web/Desktop to guess shared SDK shape. | Start after REQ-002 completion report or merge confirms stable `WorkspaceId`, `CurrentWorkspaceResponse`, current-user/session API shape, and the coordinator decides a shared client boundary is needed. |
+| `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | REQ-002 may already provide the needed application/API exposure; starting now risks duplicating or rewriting Platform workspace work. | Start only if REQ-002 completion report shows current workspace cannot be reached by Web/Desktop and coordinator approves a focused Web/Host/API exposure lane. |
 
 ## Conflict-Risk Surfaces
 
@@ -118,22 +129,32 @@ Acceptance criteria:
 ```text
 You are the web-shell development session for CodeCafe-Next.
 
+Requirement:
+- Requirement ID: REQ-003
+- Title: Cross-Platform Workspace Entry Vertical Slice
+
 Before editing code, create or switch to an independent git worktree and branch:
 - Base repository: D:\Development\CodeCafe-Next
 - Worktree path: D:\Development\CodeCafe-Next.worktrees\web-shell
 - Branch: codex/web-shell
-- Base branch: main
+- Base branch: origin/main
 
-Immediately report:
+Immediately report before making code changes:
 - actual worktree path
 - actual branch
 - allowed paths
 - forbidden paths
+- whether your branch was created from the latest origin/main
 
 Allowed primary paths:
 - src/Frontend/codecafe-web/src/**
 - tests/Frontend/** if frontend tests are added
 - docs/architecture/frontend.md only if documenting architecture decisions from implementation
+
+Read-only context:
+- docs/coordination/module-contracts.md
+- docs/product/ai-work-os-blueprint.md
+- src/Modules/Platform/CodeCafe.Modules.Platform.Contracts/** if present in your base
 
 Forbidden without coordinator approval:
 - backend source under src/Modules/**
@@ -146,15 +167,46 @@ Forbidden without coordinator approval:
 - docs/coordination/**
 
 Task:
-Build the first browser workspace shell foundation using the existing Vite + React + TypeScript and Feature-Sliced Design structure. Keep the implementation focused on shell composition, routing readiness, and reusable UI/API/realtime foundations. Do not invent backend endpoints.
+Implement the Web side of REQ-003. Build a visible workspace shell so an authenticated user lands in an AI Work OS workspace experience rather than an isolated page. Keep this to layout, routing readiness, current-workspace display, and centralized typed client boundary. Do not implement Notes, AI, Code, or backend endpoints.
+
+Dependency handling:
+- REQ-003 depends on REQ-002 Platform workspace contracts/API.
+- Do not modify the already dispatched REQ-002 work.
+- If REQ-002 is not merged into your base, create a replaceable typed boundary for `WorkspaceId` and `CurrentWorkspaceResponse` under shared/process-level frontend code.
+- Do not hardcode final backend endpoint paths that are not present.
+- If you need placeholder data, isolate it behind the workspace client boundary and call it out in your completion report.
+- Do not scatter raw `fetch` calls across pages or widgets.
+
+Expected Web shell:
+- left navigation
+- main workspace surface
+- AI/context panel placeholder
+- current workspace display
+- authenticated/session-aware entry shape using existing auth concepts where available
 
 Acceptance criteria:
 - App shell has clear slots for navigation, main workspace surface, and AI/context panel.
+- Current workspace is displayed through a typed boundary, even if backed by a temporary placeholder before REQ-002 is merged.
 - FSD import direction remains respected.
 - No raw backend API assumptions are scattered through pages.
-- `npm run type-check` and `npm run build` pass from `src/Frontend/codecafe-web`, or failures are reported with exact causes.
+- `npm run type-check` passes from `src/Frontend/codecafe-web`.
+- `npm run build` passes from `src/Frontend/codecafe-web`.
 - No package or lockfile changes unless coordinator approved them first.
-- You commit your work and report commit hash, diff summary, tests, and residual integration risks.
+- You commit your work.
+
+Completion report required:
+- Worktree path.
+- Branch name.
+- Commit hash and commit message.
+- Responsible paths changed.
+- Forbidden paths touched, or state "none".
+- Workspace client boundary files added or changed.
+- Whether any placeholder workspace data remains.
+- Diff summary.
+- Exact type-check/build/test commands run and results.
+- Whether Web REQ-003 acceptance criteria are fully met.
+- Follow-up integration lanes requested, especially if a real workspace API binding is needed after REQ-002.
+- Residual risks.
 ```
 
 ### Prompt: platform-workspace
@@ -340,22 +392,32 @@ Acceptance criteria:
 ```text
 You are the avalonia-desktop development session for CodeCafe-Next.
 
+Requirement:
+- Requirement ID: REQ-003
+- Title: Cross-Platform Workspace Entry Vertical Slice
+
 Before editing code, create or switch to an independent git worktree and branch:
 - Base repository: D:\Development\CodeCafe-Next
 - Worktree path: D:\Development\CodeCafe-Next.worktrees\avalonia-desktop
 - Branch: codex/avalonia-desktop
-- Base branch: main
+- Base branch: origin/main
 
-Immediately report:
+Immediately report before making code changes:
 - actual worktree path
 - actual branch
 - allowed paths
 - forbidden paths
+- whether your branch was created from the latest origin/main
 
 Allowed primary paths:
-- src/Desktop/** if a desktop scaffold is approved within this task
+- src/Desktop/**
 - tests/Desktop/** if desktop tests are added
 - docs/architecture/** only for desktop architecture notes
+
+Read-only context:
+- docs/coordination/module-contracts.md
+- docs/product/ai-work-os-blueprint.md
+- Reference/Avalonia/** if present locally
 
 Forbidden without coordinator approval:
 - CodeCafe.slnx
@@ -369,12 +431,49 @@ Forbidden without coordinator approval:
 - docs/coordination/**
 
 Task:
-Prepare the Avalonia desktop lane foundation. Inspect the existing repository and local `Reference/Avalonia` checkout, then propose the minimal desktop project shape. Only create a scaffold if it can be kept inside `src/Desktop/**` without changing shared solution or host files; otherwise stop after documenting the exact integration proposal.
+Implement the Desktop side of REQ-003. Create an Avalonia workspace shell foundation that presents CodeCafe as a desktop AI Work OS workbench centered on the current workspace. Keep this to desktop shell structure and typed workspace boundary. Do not implement Notes, AI, Code, backend endpoints, solution integration, or host wiring.
+
+Dependency handling:
+- REQ-003 depends on REQ-002 Platform workspace contracts/API.
+- Do not modify the already dispatched REQ-002 work.
+- If REQ-002 is not merged into your base, create a replaceable local desktop contract for `WorkspaceId` and `CurrentWorkspaceResponse`.
+- Do not hardcode final backend endpoint paths that are not present.
+- If you need placeholder workspace data, isolate it behind a desktop workspace client/service boundary and call it out in your completion report.
+
+Expected Desktop shell:
+- desktop window or root view centered on current workspace
+- left navigation
+- main workspace surface
+- AI/context panel placeholder
+- current workspace display
+
+Implementation boundaries:
+- Keep all scaffold/code inside `src/Desktop/**` unless coordinator approves otherwise.
+- Do not modify `CodeCafe.slnx`.
+- Do not modify `Directory.Build.props`.
+- Do not modify backend, web frontend, host, adapters, or shared building blocks.
+- If a usable Avalonia scaffold cannot be created without solution/shared changes, stop after documenting the exact required follow-up instead of forcing the change.
 
 Acceptance criteria:
-- Desktop lane reports the proposed Avalonia project structure and integration points.
+- Desktop has an Avalonia workspace shell foundation under `src/Desktop/**`, or a precise blocked report explaining why it cannot be scaffolded without forbidden files.
+- Shell concepts are centered on Workspace, not an isolated page.
+- Current workspace is displayed through a typed desktop boundary, even if backed by a temporary placeholder before REQ-002 is merged.
 - No solution, host, backend, frontend, or shared file changes are made without coordinator approval.
-- If scaffolded, it is contained in `src/Desktop/**` and builds independently if possible.
-- You run the relevant build command for any scaffold you create, or explain why no build was run.
-- You commit your work and report commit hash, diff summary, tests, and residual integration risks.
+- If scaffolded, `dotnet build` for the desktop project passes, or exact failure causes are reported.
+- You commit your work.
+
+Completion report required:
+- Worktree path.
+- Branch name.
+- Commit hash and commit message.
+- Responsible paths changed.
+- Forbidden paths touched, or state "none".
+- Desktop project/scaffold path.
+- Workspace client/service boundary files added or changed.
+- Whether any placeholder workspace data remains.
+- Diff summary.
+- Exact build/test commands run and results.
+- Whether Desktop REQ-003 acceptance criteria are fully met.
+- Follow-up integration lanes requested, especially if solution integration or real workspace API binding is needed after REQ-002.
+- Residual risks.
 ```
