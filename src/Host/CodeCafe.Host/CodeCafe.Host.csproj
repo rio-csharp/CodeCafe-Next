@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CS1591;IDE0005</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,9 +21,19 @@
     <ProjectReference Include="..\..\Adapters\Mcp\CodeCafe.Mcp\CodeCafe.Mcp.csproj" />
     <ProjectReference Include="..\..\Adapters\Realtime\CodeCafe.Realtime\CodeCafe.Realtime.csproj" />
     <ProjectReference Include="..\..\Modules\Platform\CodeCafe.Modules.Platform.Application\CodeCafe.Modules.Platform.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Platform\CodeCafe.Modules.Platform.Infrastructure\CodeCafe.Modules.Platform.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Modules\Notes\CodeCafe.Modules.Notes.Application\CodeCafe.Modules.Notes.Application.csproj" />
     <ProjectReference Include="..\..\Modules\Code\CodeCafe.Modules.Code.Application\CodeCafe.Modules.Code.Application.csproj" />
     <ProjectReference Include="..\..\Modules\AI\CodeCafe.Modules.AI.Application\CodeCafe.Modules.AI.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="CodeCafe.IntegrationTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Remove="CodeCafe.IntegrationTests" />
+  </ItemGroup>
+
 </Project>
+

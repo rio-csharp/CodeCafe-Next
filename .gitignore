@@ -141,6 +141,9 @@ pnpm-lock.yaml.bak
 .swe-bench/
 .continue/
 
+# Local reference source checkouts
+Reference/
+
 # Logs
 *.log
 logs/

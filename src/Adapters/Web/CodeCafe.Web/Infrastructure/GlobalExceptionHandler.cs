@@ -1,3 +1,4 @@
+using CodeCafe.Modules.Platform.Application.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace CodeCafe.Web.Infrastructure;
@@ -35,35 +36,69 @@ public sealed partial class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        // Always log with full exception. Production logs may be filtered to sinks
-        // that never reach the client.
-        LogUnhandledException(
-            _logger,
-            exception,
-            httpContext.Request.Method,
-            httpContext.Request.Path);
+        // Known application-layer exceptions get a mapped status code and a
+        // generic message. Everything else falls through to the 500 path so we
+        // never leak the wrong thing to the client.
+        var (status, code, message) = MapKnownException(exception);
+
+        // Logging policy: 4xx-class outcomes are still recorded at warning so
+        // we can spot patterns (credential stuffing, broken clients) without
+        // flooding the error sink. True 5xx paths log the full exception.
+        if (status >= 500)
+        {
+            LogUnhandledException(
+                _logger,
+                exception,
+                httpContext.Request.Method,
+                httpContext.Request.Path);
+        }
+        else
+        {
+            LogHandledClientError(
+                _logger,
+                exception,
+                status,
+                code,
+                httpContext.Request.Method,
+                httpContext.Request.Path);
+        }
 
         var traceId = httpContext.TraceIdentifier;
 
-        // Keep the public payload minimal in production. Development gets a
-        // single "details" string with type and message so debugging is easy
-        // without needing to open a full ProblemDetails payload.
-        var response = new ErrorResponse(
-            Code: "internal_error",
-            Message: "An unexpected error occurred.",
-            TraceId: traceId)
+        var response = new ErrorResponse(code, message, traceId)
         {
             Details = _environment.IsDevelopment()
                 ? $"{exception.GetType().FullName}: {exception.Message}"
                 : null
         };
 
-        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        httpContext.Response.StatusCode = status;
         httpContext.Response.ContentType = "application/json";
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
 
         return true;
     }
+
+    private static (int Status, string Code, string Message) MapKnownException(Exception exception) =>
+        exception switch
+        {
+            InvalidCredentialsException => (
+                StatusCodes.Status401Unauthorized,
+                "invalid_credentials",
+                "Invalid email or password."),
+            EmailAlreadyExistsException => (
+                StatusCodes.Status409Conflict,
+                "email_already_exists",
+                "An account with that email already exists."),
+            ArgumentException => (
+                StatusCodes.Status400BadRequest,
+                "invalid_request",
+                "The request is invalid."),
+            _ => (
+                StatusCodes.Status500InternalServerError,
+                "internal_error",
+                "An unexpected error occurred.")
+        };
 
     [LoggerMessage(
         EventId = 1000,
@@ -74,4 +109,17 @@ public sealed partial class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         string method,
         string path);
+
+    [LoggerMessage(
+        EventId = 1001,
+        Level = LogLevel.Warning,
+        Message = "Handled client error {Status} {Code} while processing {Method} {Path}")]
+    private static partial void LogHandledClientError(
+        ILogger logger,
+        Exception exception,
+        int status,
+        string code,
+        string method,
+        string path);
 }
+

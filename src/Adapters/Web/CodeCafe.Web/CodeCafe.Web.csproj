@@ -1,18 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <NoWarn>$(NoWarn);CS1591;IDE0005</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\CodeCafe.SharedKernel\CodeCafe.SharedKernel.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\CodeCafe.BuildingBlocks\CodeCafe.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Platform\CodeCafe.Modules.Platform.Application\CodeCafe.Modules.Platform.Application.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Platform\CodeCafe.Modules.Platform.Contracts\CodeCafe.Modules.Platform.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
