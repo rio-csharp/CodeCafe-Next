@@ -25,8 +25,9 @@ This board tracks merge readiness for active CodeCafe development lanes.
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | Deferred; likely needed after REQ-002 merge | Not ready | Wait for REQ-002 review and merge | Web adapter, Host wiring, Platform application query exposure |
 | `notes-knowledge` | `codex/notes-knowledge` | Planned | Not ready | Session not started | Notes contracts, Web adapter endpoints, Host wiring |
 | `code-workspace` | `codex/code-workspace` | Planned | Not ready | Session not started | Code contracts, AI integration, MCP tools |
-| `avalonia-desktop` | `codex/avalonia-desktop` | Implementation complete for REQ-003 Desktop | Awaiting review | Review session required before merge; source commit `0024ab90924ff45d9d06a9f7b2f22f6be30e1582`; final API binding depends on REQ-002/API follow-up | desktop project placement, placeholder workspace client, future solution/CI wiring |
-| `avalonia-desktop-review` | `codex/avalonia-desktop-review` | Ready to dispatch | Not ready | Review-only session not started | None if review remains read-only |
+| `avalonia-desktop` | `codex/avalonia-desktop` | Review passed for REQ-003 Desktop | Ready for merge session | Merge via `avalonia-desktop-merge`; final API binding depends on REQ-002/API follow-up | desktop project placement, placeholder workspace client, future solution/CI wiring |
+| `avalonia-desktop-review` | `codex/avalonia-desktop-review` | Completed | Done | No blocking findings; can archive session | None; review remained read-only |
+| `avalonia-desktop-merge` | `codex/avalonia-desktop-merge` | Ready to dispatch | Not ready | Merge session not started | Main push, desktop build verification |
 | `desktop-solution-wiring` | `codex/desktop-solution-wiring` | Deferred follow-up | Not ready | Wait for `avalonia-desktop` review and merge | `CodeCafe.slnx`, shared build props, CI wiring |
 
 ## Conflict-Risk Queue
@@ -86,7 +87,7 @@ The desktop lane must define its own build command after the Avalonia project sh
 - `platform-workspace-entry-api` should start after REQ-002 merge because no current workspace Web/API endpoint exists on `main` or in the REQ-002 branch.
 - Web shell implementation is complete on `codex/web-shell`; review it before opening a merge session.
 - Keep `client-sdk-foundation` deferred until Web/Desktop reviews show whether shared client-boundary unification is actually needed.
-- Avalonia desktop implementation is complete on `codex/avalonia-desktop`; review it before opening a merge session.
+- Avalonia desktop review passed; open `avalonia-desktop-merge` before starting any solution/CI wiring.
 - Keep `desktop-solution-wiring` deferred until after desktop review/merge because it touches conflict-risk solution/CI surfaces.
 - REQ-003 Web/Desktop shell branches may be built in parallel with REQ-002 only if they use replaceable typed boundaries and do not assume missing endpoint paths.
 - REQ-003 is not fully product-complete until current workspace contracts/API from REQ-002 are available and bound.

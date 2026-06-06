@@ -31,8 +31,9 @@ Coordinator rule: this session does not create child sessions. It only updates c
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | `D:\Development\CodeCafe-Next.worktrees\platform-workspace-entry-api` | Conditional Web/Host exposure for current workspace after REQ-002 merge | Platform domain rewrite, non-Platform modules, frontend, desktop, package files, shared building blocks without coordinator approval | Deferred; likely needed after REQ-002 merge |
 | `notes-knowledge` | `codex/notes-knowledge` | `D:\Development\CodeCafe-Next.worktrees\notes-knowledge` | `src/Modules/Notes/**`, Notes tests, Notes contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
 | `code-workspace` | `codex/code-workspace` | `D:\Development\CodeCafe-Next.worktrees\code-workspace` | `src/Modules/Code/**`, Code tests, Code contract proposals | `src/Host/**`, `src/Adapters/**`, `CodeCafe.slnx`, `Directory.Build.props`, other modules, frontend without coordinator approval | Planned |
-| `avalonia-desktop` | `codex/avalonia-desktop` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop` | future `src/Desktop/**`, future desktop tests, Avalonia client architecture notes | backend module internals, web frontend, host, solution files, package files, shared building blocks without coordinator approval | Completed for REQ-003 Desktop; pending review |
-| `avalonia-desktop-review` | `codex/avalonia-desktop-review` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop-review` | Review `codex/avalonia-desktop` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Ready to dispatch |
+| `avalonia-desktop` | `codex/avalonia-desktop` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop` | future `src/Desktop/**`, future desktop tests, Avalonia client architecture notes | backend module internals, web frontend, host, solution files, package files, shared building blocks without coordinator approval | Review passed; ready for merge |
+| `avalonia-desktop-review` | `codex/avalonia-desktop-review` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop-review` | Review `codex/avalonia-desktop` against `main`; no implementation changes | All source/docs changes are forbidden unless coordinator converts the session into a fix task | Completed; can archive |
+| `avalonia-desktop-merge` | `codex/avalonia-desktop-merge` | `D:\Development\CodeCafe-Next.worktrees\avalonia-desktop-merge` | Merge `codex/avalonia-desktop` into latest `main`, verify desktop build, push main if clean | Do not change source outside conflict resolution; do not start solution/CI wiring | Ready to dispatch |
 
 ## Deferred Child Sessions
 
@@ -43,6 +44,14 @@ Do not start these sessions until the coordinator explicitly reactivates them.
 | `client-sdk-foundation` | `codex/client-sdk-foundation` | REQ-002 workspace contract/API is not merged yet; `web-shell` currently uses an isolated placeholder client boundary. Starting now would still force shared SDK shape guesses. | Start after REQ-002 and the workspace API exposure lane are merged, and after Web/Desktop review reports show duplicated client-boundary work that should be unified. |
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | REQ-002 provides application-layer workspace foundation but no Web/Controller endpoint was found for current workspace. Starting before REQ-002 review/merge would stack integration work on an unmerged branch. | Start after REQ-002 is reviewed and merged, unless review finds the endpoint already exists or rejects the branch. |
 | `desktop-solution-wiring` | `codex/desktop-solution-wiring` | `avalonia-desktop` intentionally avoided `CodeCafe.slnx`, shared build props, and CI wiring. Starting now would touch conflict-risk files before review/merge. | Start after `avalonia-desktop` review and merge if coordinator approves adding desktop project to solution/CI. |
+
+## Session Cleanup Candidates
+
+These sessions have completed their current mission and can be archived unless the coordinator reopens them:
+
+| Session Name | Reason |
+| --- | --- |
+| `avalonia-desktop-review` | REQ-003 Desktop review completed with no blocking findings and merge recommendation. |
 
 ## Conflict-Risk Surfaces
 
@@ -758,6 +767,55 @@ Completion report back to coordinator must include:
 - Commands run and results.
 - Whether forbidden paths were touched by the source branch.
 - Whether placeholder workspace data is properly isolated.
+- Whether `desktop-solution-wiring` should remain deferred.
+- Residual risks.
+```
+
+### Prompt: avalonia-desktop-merge
+
+```text
+Session name: avalonia-desktop-merge
+
+You are the avalonia-desktop-merge session for CodeCafe-Next.
+
+Merge target:
+- Requirement ID: REQ-003
+- Source branch: codex/avalonia-desktop
+- Source commit: 0024ab90924ff45d9d06a9f7b2f22f6be30e1582
+- Review result: no blocking findings; recommended to merge
+- Target branch: main / origin/main
+
+Create or switch to an independent git worktree and branch:
+- Base repository: D:\Development\CodeCafe-Next
+- Worktree path: D:\Development\CodeCafe-Next.worktrees\avalonia-desktop-merge
+- Branch: codex/avalonia-desktop-merge
+- Base branch: origin/main
+
+Merge rules:
+- Merge `codex/avalonia-desktop` into this merge branch.
+- Resolve conflicts only if they are directly caused by the merge.
+- Do not add solution wiring, CI wiring, Host changes, backend changes, frontend changes, package changes, or shared build prop changes.
+- Do not start `desktop-solution-wiring`.
+- If conflicts are non-trivial, stop and report them instead of guessing.
+- If verification fails, stop and report; do not push `main`.
+- If verification passes, fast-forward or merge into `main` and push `origin/main`.
+
+Required verification:
+- `git diff --name-only origin/main...codex/avalonia-desktop`
+- `git merge --no-ff codex/avalonia-desktop`
+- `dotnet build src/Desktop/CodeCafe.Desktop/CodeCafe.Desktop.csproj`
+- `git status --short --branch`
+
+Completion report back to coordinator must include:
+- Worktree path.
+- Merge branch.
+- Source branch and commit merged.
+- Merge commit hash, if one was created.
+- Whether `main` was pushed.
+- Changed paths merged.
+- Conflicts encountered and resolutions, or "none".
+- Verification commands and results.
+- Whether `avalonia-desktop` implementation session can be archived.
 - Whether `desktop-solution-wiring` should remain deferred.
 - Residual risks.
 ```
