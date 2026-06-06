@@ -17,8 +17,9 @@ This board tracks merge readiness for active CodeCafe development lanes.
 | Lane | Branch | Status | Merge Readiness | Blockers | Conflict Risk |
 | --- | --- | --- | --- | --- | --- |
 | `ai-agent-core` | `codex/ai-agent-core` | Planned | Not ready | Session not started | AI contracts, MCP adapter, Host wiring if requested |
-| `web-shell` | `codex/web-shell` | Planned for REQ-003 | Not ready | Session not started; final API binding depends on REQ-002 | package files, shared frontend structure, future workspace API contracts |
-| `client-sdk-foundation` | `codex/client-sdk-foundation` | Conditional follow-up | Not ready | Do not start until REQ-002 contracts/API are known | shared client boundary shape, package files if generated tooling is proposed |
+| `web-shell` | `codex/web-shell` | Implementation complete for REQ-003 Web | Awaiting review | Review session required before merge; source commit `8d17aa61a2e525ee5e8e541c337c50be1bf9e36b`; final API binding depends on REQ-002/API follow-up | shared frontend structure, placeholder workspace client, future workspace API binding |
+| `web-shell-review` | `codex/web-shell-review` | Ready to dispatch | Not ready | Review-only session not started | None if review remains read-only |
+| `client-sdk-foundation` | `codex/client-sdk-foundation` | Conditional follow-up | Not ready | Keep deferred until REQ-002 and workspace API exposure are merged | shared client boundary shape, package files if generated tooling is proposed |
 | `platform-workspace` | `codex/platform-workspace` | Implementation complete for REQ-002 | Awaiting review | Review session required before merge; source commit `a7575952c355df5d7fa2b0337d78b22ea92a714a` | Platform contracts, EF migrations, registration flow, current workspace fallback |
 | `platform-workspace-review` | `codex/platform-workspace-review` | Ready to dispatch | Not ready | Review-only session not started | None if review remains read-only |
 | `platform-workspace-entry-api` | `codex/platform-workspace-entry-api` | Deferred; likely needed after REQ-002 merge | Not ready | Wait for REQ-002 review and merge | Web adapter, Host wiring, Platform application query exposure |
@@ -80,6 +81,8 @@ The desktop lane must define its own build command after the Avalonia project sh
 - Platform workspace implementation is complete on `codex/platform-workspace`; review it before opening a merge session.
 - Platform workspace should merge before Notes, Code, AI, Web, Desktop, or Mobile lanes require persisted workspace context.
 - `platform-workspace-entry-api` should start after REQ-002 merge because no current workspace Web/API endpoint exists on `main` or in the REQ-002 branch.
+- Web shell implementation is complete on `codex/web-shell`; review it before opening a merge session.
+- Keep `client-sdk-foundation` deferred until Web/Desktop reviews show whether shared client-boundary unification is actually needed.
 - REQ-003 Web/Desktop shell branches may be built in parallel with REQ-002 only if they use replaceable typed boundaries and do not assume missing endpoint paths.
 - REQ-003 is not fully product-complete until current workspace contracts/API from REQ-002 are available and bound.
 - Package and lockfile changes should be batched and reviewed intentionally.

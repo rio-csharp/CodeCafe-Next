@@ -57,7 +57,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
 | WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; pending review/merge |
-| Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Planned for REQ-003, final shape depends on REQ-002 |
+| Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Web boundary implemented on `codex/web-shell` with placeholder data; final shape depends on REQ-002 and API follow-up |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
 | Desktop client API consumption model | Avalonia shell | `avalonia-desktop` | Planned |
@@ -107,7 +107,16 @@ Rules:
 - Temporary client types must be isolated behind API/client/service boundaries so they can be replaced by real Platform contracts later.
 - Raw fetch calls must not be scattered across Web pages or widgets.
 - Desktop API access must be behind a service boundary, not embedded in views.
-- A separate `client-sdk-foundation` lane should start only after REQ-002 defines enough stable API/contract shape to avoid guessing.
+- A separate `client-sdk-foundation` lane should start only after REQ-002 and workspace API exposure are merged, and after Web/Desktop reviews show duplicated client-boundary work that should be unified.
+
+REQ-003 Web completion status:
+
+- Source branch: `codex/web-shell`
+- Source commit: `8d17aa61a2e525ee5e8e541c337c50be1bf9e36b`
+- Verification reported by child session: `npm run type-check` passed; `npm run build` passed; Vite render sanity check passed with no browser console errors.
+- Forbidden paths touched: none reported and coordinator spot-check found none.
+- Workspace client boundary: `src/Frontend/codecafe-web/src/processes/workspace/**`
+- Placeholder status: local placeholder current workspace data remains and must be replaced after REQ-002/API follow-up.
 
 ## Contract Change Protocol
 
