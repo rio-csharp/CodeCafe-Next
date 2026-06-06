@@ -57,7 +57,7 @@ This document tracks public module boundaries and cross-lane contract rules.
 | --- | --- | --- | --- |
 | Minimal AI conversation/task contract | MCP, Web shell, Realtime | `ai-agent-core` | Planned |
 | WorkspaceId, current workspace context, basic workspace response DTO | Notes, Code, AI, Web shell, Desktop, Mobile | `platform-workspace` | Implemented for REQ-002 on commit `a7575952c355df5d7fa2b0337d78b22ea92a714a`; review found fixes needed before merge |
-| Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Web boundary implemented on `codex/web-shell` with placeholder data; final shape depends on REQ-002 and API follow-up |
+| Cross-platform workspace client boundary | Web shell, Desktop, Mobile | `web-shell`, `avalonia-desktop`, possible `client-sdk-foundation` | Web and Desktop boundaries implemented with placeholder data; final shape depends on REQ-002 and API follow-up |
 | Minimal Notes knowledge item contract | Web shell, AI tools | `notes-knowledge` | Planned |
 | Minimal Code workspace context contract | AI tools, MCP | `code-workspace` | Planned |
 | Desktop client API consumption model | Avalonia shell | `avalonia-desktop` | Planned |
@@ -119,6 +119,16 @@ REQ-003 Web completion status:
 - Forbidden paths touched: none reported and coordinator spot-check found none.
 - Workspace client boundary: `src/Frontend/codecafe-web/src/processes/workspace/**`
 - Placeholder status: local placeholder current workspace data remains and must be replaced after REQ-002/API follow-up.
+
+REQ-003 Desktop completion status:
+
+- Source branch: `codex/avalonia-desktop`
+- Source commit: `0024ab90924ff45d9d06a9f7b2f22f6be30e1582`
+- Verification reported by child session: `dotnet build src/Desktop/CodeCafe.Desktop/CodeCafe.Desktop.csproj` passed with 0 warnings and 0 errors.
+- Forbidden paths touched: none reported; coordinator spot-check found only `src/Desktop/CodeCafe.Desktop/**`.
+- Workspace client boundary: `src/Desktop/CodeCafe.Desktop/Workspace/**`
+- Placeholder status: local placeholder current workspace data remains and must be replaced after REQ-002/API follow-up.
+- Solution/CI status: not wired into `CodeCafe.slnx` or CI yet; defer `desktop-solution-wiring` until after review/merge.
 
 ## Contract Change Protocol
 
