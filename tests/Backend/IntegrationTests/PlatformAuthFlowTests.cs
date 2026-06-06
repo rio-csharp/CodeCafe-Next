@@ -1,6 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using CodeCafe.Modules.Platform.Application.Abstractions;
+using CodeCafe.Modules.Platform.Application.Workspaces.Queries.GetCurrentWorkspaceContext;
 using CodeCafe.Modules.Platform.Contracts.Auth;
+using CodeCafe.Modules.Platform.Infrastructure.Persistence;
+using MediatR;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeCafe.IntegrationTests;
 
@@ -72,6 +78,87 @@ public sealed class PlatformAuthFlowTests : IClassFixture<PlatformAuthWebApplica
     }
 
     [Fact]
+    public async Task Register_User_CanResolve_CurrentWorkspaceContext_Query()
+    {
+        var client = _factory.CreateClient();
+
+        var email = $"workspace-owner-{Guid.NewGuid():N}@example.com";
+        var registerResponse = await client.PostAsJsonAsync(
+            "/api/auth/register",
+            new RegisterRequest(email, "workspace-password", "Workspace Owner"));
+        Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
+
+        var registered = await registerResponse.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(registered);
+
+        using var currentUserFactory = _factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddScoped<ICurrentUser>(_ => new TestCurrentUser(
+                    registered!.UserId,
+                    registered.Email));
+            });
+        });
+
+        using var scope = currentUserFactory.Services.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var context = await mediator.Send(new GetCurrentWorkspaceContextQuery());
+
+        Assert.NotNull(context);
+        Assert.Equal(registered!.UserId, context!.UserId);
+        Assert.Equal(registered.UserId, context.Workspace.OwnerUserId);
+        Assert.NotEqual(Guid.Empty, context.Workspace.WorkspaceId);
+        Assert.Equal("Personal workspace", context.Workspace.Name);
+        Assert.Equal("Personal", context.Workspace.Kind);
+    }
+
+    [Fact]
+    public async Task CurrentWorkspaceContext_Query_Creates_DefaultWorkspace_WhenMissing()
+    {
+        var client = _factory.CreateClient();
+
+        var email = $"workspace-create-{Guid.NewGuid():N}@example.com";
+        var registerResponse = await client.PostAsJsonAsync(
+            "/api/auth/register",
+            new RegisterRequest(email, "workspace-password", "Workspace Creator"));
+        Assert.Equal(HttpStatusCode.OK, registerResponse.StatusCode);
+
+        var registered = await registerResponse.Content.ReadFromJsonAsync<AuthResponse>();
+        Assert.NotNull(registered);
+
+        using var currentUserFactory = _factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddScoped<ICurrentUser>(_ => new TestCurrentUser(
+                    registered!.UserId,
+                    registered.Email));
+            });
+        });
+
+        using var scope = currentUserFactory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+        var existingWorkspaces = db.Workspaces
+            .Where(workspace => workspace.OwnerUserId == registered!.UserId)
+            .ToList();
+        db.Workspaces.RemoveRange(existingWorkspaces);
+        await db.SaveChangesAsync();
+
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var context = await mediator.Send(new GetCurrentWorkspaceContextQuery());
+
+        Assert.NotNull(context);
+        Assert.Equal(registered!.UserId, context!.UserId);
+        Assert.Equal(registered.UserId, context.Workspace.OwnerUserId);
+        Assert.NotEqual(Guid.Empty, context.Workspace.WorkspaceId);
+        Assert.Equal("Personal workspace", context.Workspace.Name);
+        Assert.Equal("Personal", context.Workspace.Kind);
+    }
+
+    [Fact]
     public async Task Login_WithWrongPassword_Returns_401_With_Stable_Code()
     {
         var client = _factory.CreateClient();
@@ -103,5 +190,20 @@ public sealed class PlatformAuthFlowTests : IClassFixture<PlatformAuthWebApplica
             "/api/auth/register",
             new RegisterRequest(email, "pw", "Carol"));
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+    }
+
+    private sealed class TestCurrentUser : ICurrentUser
+    {
+        public TestCurrentUser(Guid userId, string email)
+        {
+            UserId = userId;
+            Email = email;
+        }
+
+        public Guid? UserId { get; }
+
+        public string? Email { get; }
+
+        public bool IsAuthenticated => true;
     }
 }

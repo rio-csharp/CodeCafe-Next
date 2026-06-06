@@ -15,6 +15,8 @@ public sealed class PlatformDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<Workspace> Workspaces => Set<Workspace>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // SQLite does not honour schemas, so we keep tables in the default
@@ -22,5 +24,6 @@ public sealed class PlatformDbContext : DbContext
         // DbContext (own schema) once we move to a database engine that
         // supports them.
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new WorkspaceConfiguration());
     }
 }
