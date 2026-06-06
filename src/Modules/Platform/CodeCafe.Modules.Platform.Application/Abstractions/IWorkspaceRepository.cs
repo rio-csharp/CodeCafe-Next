@@ -10,5 +10,8 @@ public interface IWorkspaceRepository
 {
     Task<Workspace?> FindDefaultPersonalForOwnerAsync(Guid ownerUserId, CancellationToken cancellationToken);
 
-    Task AddAsync(Workspace workspace, CancellationToken cancellationToken);
+    Task<Workspace> EnsureDefaultPersonalForOwnerAsync(
+        Guid ownerUserId,
+        DateTime createdAtUtc,
+        CancellationToken cancellationToken);
 }

@@ -13,18 +13,15 @@ namespace CodeCafe.Modules.Platform.Application.Auth.Commands.Register;
 public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IWorkspaceRepository _workspaceRepository;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IClock _clock;
 
     public RegisterCommandHandler(
         IUserRepository userRepository,
-        IWorkspaceRepository workspaceRepository,
         IPasswordHasher passwordHasher,
         IClock clock)
     {
         _userRepository = userRepository;
-        _workspaceRepository = workspaceRepository;
         _passwordHasher = passwordHasher;
         _clock = clock;
     }
@@ -40,11 +37,9 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Re
 
         var hash = _passwordHasher.Hash(request.Password);
         var user = User.Register(email, hash, request.DisplayName, _clock.UtcNow);
+        var workspace = Workspace.CreateDefaultPersonal(user.Id, _clock.UtcNow);
 
-        await _userRepository.AddAsync(user, cancellationToken);
-        await _workspaceRepository.AddAsync(
-            Workspace.CreateDefaultPersonal(user.Id, _clock.UtcNow),
-            cancellationToken);
+        await _userRepository.AddWithDefaultWorkspaceAsync(user, workspace, cancellationToken);
 
         return new RegisterResult(user.Id, user.Email.Value, user.DisplayName);
     }

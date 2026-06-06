@@ -23,9 +23,38 @@ public sealed class WorkspaceRepository : IWorkspaceRepository
                 w => w.OwnerUserId == ownerUserId && w.Kind == WorkspaceKind.Personal,
                 cancellationToken);
 
-    public async Task AddAsync(Workspace workspace, CancellationToken cancellationToken)
+    public async Task<Workspace> EnsureDefaultPersonalForOwnerAsync(
+        Guid ownerUserId,
+        DateTime createdAtUtc,
+        CancellationToken cancellationToken)
     {
+        var existing = await FindDefaultPersonalForOwnerAsync(ownerUserId, cancellationToken);
+        if (existing is not null)
+        {
+            return existing;
+        }
+
+        var workspace = Workspace.CreateDefaultPersonal(ownerUserId, createdAtUtc);
         await _db.Workspaces.AddAsync(workspace, cancellationToken);
-        await _db.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await _db.SaveChangesAsync(cancellationToken);
+            return workspace;
+        }
+        catch (DbUpdateException)
+        {
+            _db.Entry(workspace).State = EntityState.Detached;
+
+            var concurrentWinner = await FindDefaultPersonalForOwnerAsync(
+                ownerUserId,
+                cancellationToken);
+            if (concurrentWinner is not null)
+            {
+                return concurrentWinner;
+            }
+
+            throw;
+        }
     }
 }

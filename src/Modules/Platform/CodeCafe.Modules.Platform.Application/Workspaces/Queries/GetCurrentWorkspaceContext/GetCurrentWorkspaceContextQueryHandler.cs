@@ -1,5 +1,4 @@
 using CodeCafe.Modules.Platform.Application.Abstractions;
-using CodeCafe.Modules.Platform.Domain.Entities;
 using MediatR;
 
 namespace CodeCafe.Modules.Platform.Application.Workspaces.Queries.GetCurrentWorkspaceContext;
@@ -48,8 +47,10 @@ public sealed class GetCurrentWorkspaceContextQueryHandler
             cancellationToken);
         if (workspace is null)
         {
-            workspace = Workspace.CreateDefaultPersonal(user.Id, _clock.UtcNow);
-            await _workspaceRepository.AddAsync(workspace, cancellationToken);
+            workspace = await _workspaceRepository.EnsureDefaultPersonalForOwnerAsync(
+                user.Id,
+                _clock.UtcNow,
+                cancellationToken);
         }
 
         return new CurrentWorkspaceContextView(
