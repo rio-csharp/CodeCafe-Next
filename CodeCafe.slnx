@@ -14,6 +14,9 @@
     <Project Path="src/BuildingBlocks/CodeCafe.BuildingBlocks/CodeCafe.BuildingBlocks.csproj" />
     <Project Path="src/BuildingBlocks/CodeCafe.SharedKernel/CodeCafe.SharedKernel.csproj" />
   </Folder>
+  <Folder Name="/src/Desktop/">
+    <Project Path="src/Desktop/CodeCafe.Desktop/CodeCafe.Desktop.csproj" />
+  </Folder>
   <Folder Name="/src/Host/">
     <Project Path="src/Host/CodeCafe.Host/CodeCafe.Host.csproj" />
   </Folder>
